@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
             printf("%s", "Usage: ./wordcount requires an input file.\n");
             return (EXIT_FAILURE);
         }
-        if (fopen(inFile, "r") == NULL) {
+        if (fopen(argv[i], "r") == NULL) {
             printf("wordcount: %s: No such file or director\n", argv[i]);
             printf("Total Lines: %d\n", totalNumOfLines);
             exit(EXIT_SUCCESS);
