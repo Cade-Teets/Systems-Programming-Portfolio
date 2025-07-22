@@ -93,6 +93,11 @@ FILE* fileOpener(FILE *inFile, char* argPoint, int* argCounter) {
 // Opening the inFile with the ith argument to read from stream
     inFile = fopen(argPoint, "r");
 // Checks if inFile pointer is NULL and if true prompt the user and EXIT_FAILURE
+    //if (*argCounter > 2
+    if (argPoint == NULL) {
+            fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
+            exit(EXIT_FAILURE);
+        }
     if (inFile == NULL) {
         fprintf(stderr, "wordcount: %s: No such file or director\n", argPoint);
         exit(EXIT_FAILURE);
