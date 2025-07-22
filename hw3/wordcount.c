@@ -31,10 +31,8 @@ FILE* fileOpener(FILE *inFile, char* argPoint , int* argCounter);
 int numLines(char *arg, int* argCounter) {
     int lineCount = 0;
     char lineBuff[MAX_NUM_CHAR];
-    FILE* inFile = NULL;
-    
+    FILE* inFile = NULL;    
     inFile = fileOpener(inFile, arg, argCounter);
-
     while (fgets(lineBuff , MAX_NUM_CHAR , inFile) != NULL) {
         lineCount++;
     }
@@ -51,7 +49,6 @@ int numWords(char* arg, int* argCounter) {
     int wordCount = 0;
     char lineBuff[MAX_NUM_CHAR];
     FILE* inFile = NULL; 
-
     inFile = fileOpener(inFile,arg, argCounter);
 
     while (fgets(lineBuff, MAX_NUM_CHAR, inFile) != NULL) {
@@ -61,7 +58,9 @@ int numWords(char* arg, int* argCounter) {
         int wordLetters = 0;
 
         while (i < strlen(lineBuff)) {
-            if (lineBuff[i] == ' ' || lineBuff[i] == '\n' || lineBuff[i] == '\0') {
+            if (lineBuff[i] == ' ' ||
+            lineBuff[i] == '\n' ||
+            lineBuff[i] == '\0') {
                 wordLetters++;
             } else if (wordLetters != 0) {
                 wordCount++;
@@ -89,18 +88,30 @@ int numChars(char* arg, int* argCounter) {
     return charCount;
 }
 
-FILE* fileOpener(FILE *inFile, char* argPoint, int* argCounter) {
+FILE* fileOpener(FILE *inFile, char* argPoint, int* totalArgs) {
 // Opening the inFile with the ith argument to read from stream
-    inFile = fopen(argPoint, "r");
+    
 // Checks if inFile pointer is NULL and if true prompt the user and EXIT_FAILURE
-    //if (*argCounter > 2
+    
     if (argPoint == NULL) {
             fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
             exit(EXIT_FAILURE);
-    }
+    }   
+    
+    if (*totalArgs > 2 && (fopen(argPoint, "r") == NULL)) {
+            fprintf(stderr, "%s will not open. Skipping.\n", argPoint);
+            //printf("Total Lines: %d\n", totalNumOfLines);
+            *totalArgs-= 1;
+            argPoint = argPoint + __SIZEOF_POINTER__;
+            inFile = fileOpener(inFile, argPoint, totalArgs);
+            return NULL;
+    } 
+    
+
+    inFile = fopen(argPoint, "r");
     if (inFile == NULL) {
-        fprintf(stderr, "wordcount: <%s>: No such file or director\n", argPoint);
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "wordcount: %s: No such file or directory\n", argPoint);
+        //exit(EXIT_FAILURE);
     }
     return inFile;
 }
@@ -110,6 +121,7 @@ int main(int argc, char* argv[]) {
     const char* wordOption = "-w";
     const char* charOption = "-c";
     int argCounter = 1;
+    int totalArgs = argc - 1;
     FILE *inFile = NULL;
 
     // Check if there are no args passed and print usage message.
@@ -120,7 +132,13 @@ int main(int argc, char* argv[]) {
     strncmp(argv[1], charOption, strlen(charOption)) == 0))) {
         fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
         exit(EXIT_FAILURE);
-    } 
+    } else {
+        // There is an option flag present
+        totalArgs--;
+    }
+
+    
+
     // Logic to check option flag, changing the output
     if (strncmp(argv[1], lineOption, strlen(lineOption)) == 0) {
         /*
@@ -205,14 +223,15 @@ int main(int argc, char* argv[]) {
             exit(EXIT_FAILURE);
         }
         // Add this to file opener
-        if (fopen(argv[argCounter], "r") == NULL) {
-            fprintf(stderr, "%s will not open. Skipping.\n", argv[argCounter]);
-            printf("Total Lines: %d\n", totalNumOfLines);
-            exit(EXIT_FAILURE);
-        }
+        
         // Opening the inFile with the ith argument to read from stream
         inFile = fileOpener(inFile, argv[argCounter], &argCounter);
-
+        if (inFile == NULL) {
+            fprintf(stderr, "wordcount: %s: No such file or directory\n", argv[argCounter]);
+            argCounter++;
+            continue;
+        //exit(EXIT_FAILURE);
+        }
         // Create varibles to return line, word, char
         int ls = 0;
         int ws = 0;
