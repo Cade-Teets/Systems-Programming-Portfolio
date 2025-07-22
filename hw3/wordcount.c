@@ -24,7 +24,7 @@ int numChars(FILE *inFile);
 FILE* fileOpener(FILE *inFile, char* argPoint);
 /*  int numLines(FILE *inFile):
     Counts the number of lines in the passed input file
-    Accepts a FILE pointer as parameter
+    Accepts an open FILE pointer as parameter
     Returns an int lineCount in the inFile
     Reads from the global inFile poiner and rewinds after EOF
 */
@@ -34,9 +34,7 @@ int numLines(FILE *inFile) {
 
     while (fgets(lineBuff , MAX_NUM_CHAR , inFile) != NULL) {
         // If the newline char is found in the string, increment line counter
-        if (strchr(lineBuff, '\n') != NULL) {
-            lineCount++;
-        }
+        lineCount++;
     }
     rewind(inFile);
     return lineCount;
@@ -57,7 +55,7 @@ int numWords(FILE *inFile) {
         int wordLetters = 0;
 
         while (i < strlen(lineBuff)) {
-            if (lineBuff[i] != ' ' && lineBuff[i] != '\n') {
+            if (lineBuff[i] == ' ' || lineBuff[i] == '\n' || lineBuff[i] == '\0') {
                 wordLetters++;
             } else if (wordLetters != 0) {
                 wordCount++;
@@ -65,12 +63,9 @@ int numWords(FILE *inFile) {
             }
             i++;
         }
-        if (wordLetters != 0) {
-            wordCount++;
-        }
+        rewind(inFile);
+        return wordCount;
     }
-    rewind(inFile);
-    return wordCount;
 }
 
 int numChars(FILE *inFile) {
@@ -125,7 +120,7 @@ int main(int argc, char* argv[]) {
             printf("lines: %d %s\n", lineCount, argv[j]);
             fclose(inFile);
         }
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
     } else if (strncmp(argv[1], wordOption, strlen(wordOption)) == 0) {
         int wordCount = 0;
         for (int j = 2; j < argc; j++) {
@@ -139,7 +134,7 @@ int main(int argc, char* argv[]) {
             printf("words: %d %s\n", wordCount, argv[j]);
             fclose(inFile);
         }
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
 
     } else if (strncmp(argv[1], charOption, strlen(charOption)) == 0) {
         int charCount = 0;
