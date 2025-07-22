@@ -98,10 +98,10 @@ int main(int argc, char* argv[]) {
 
     // Check if there are no args passed and print usage message.
 
-    if (argc < 2 || argc == 2 && 
-    (strncmp(argv[1], lineOption, strnlen(lineOption)) == 0 || 
+    if (argc < 2 || (argc == 2 && 
+    (strncmp(argv[1], lineOption, strlen(lineOption)) == 0 || 
     strncmp(argv[1], wordOption, strlen(wordOption)) == 0 || 
-    strncmp(argv[1], charOption, strlen(charOption)) == 0)) {
+    strncmp(argv[1], charOption, strlen(charOption)) == 0))) {
         fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
         exit(EXIT_FAILURE);
     } 
