@@ -97,9 +97,9 @@ FILE* fileOpener(FILE *inFile, char* argPoint, int* argCounter) {
     if (argPoint == NULL) {
             fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
             exit(EXIT_FAILURE);
-        }
+    }
     if (inFile == NULL) {
-        fprintf(stderr, "wordcount: %s: No such file or director\n", argPoint);
+        fprintf(stderr, "wordcount: <%s>: No such file or director\n", argPoint);
         exit(EXIT_FAILURE);
     }
     return inFile;
