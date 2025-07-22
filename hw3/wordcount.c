@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     FILE *inFile = NULL;
 
     // Check if there are no args passed and print usage message.
-    if (argv[1] == NULL) {
+    if (argc == 1) {
        printf("%s", "Usage: ./wordcount requires an input file.\n");
        return (EXIT_FAILURE);
     }
