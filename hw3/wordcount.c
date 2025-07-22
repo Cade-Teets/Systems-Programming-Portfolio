@@ -63,9 +63,9 @@ int numWords(FILE *inFile) {
             }
             i++;
         }
-        rewind(inFile);
-        return wordCount;
     }
+    rewind(inFile);
+    return wordCount;
 }
 
 int numChars(FILE *inFile) {
