@@ -84,7 +84,7 @@ FILE* fileOpener(FILE *inFile, char* argPoint) {
     inFile = fopen(argPoint, "r");
 // Checks if inFile pointer is NULL and if true prompt the user and EXIT_FAILURE
     if (inFile == NULL) {
-        printf("wordcount: %s: No such file or director\n", argPoint);
+        fprintf(stderr, "wordcount: %s: No such file or director\n", argPoint);
         exit(EXIT_FAILURE);
     }
     return inFile;
@@ -98,21 +98,24 @@ int main(int argc, char* argv[]) {
 
     // Check if there are no args passed and print usage message.
 
-    if (argc < 2) {
-       printf("%s", "Usage: ./wordcount requires an input file.\n");
-       exit(EXIT_FAILURE);
-    }
+    if (argc < 2 || argc == 2 && 
+    (strncmp(argv[1], lineOption, strnlen(lineOption)) == 0 || 
+    strncmp(argv[1], wordOption, strlen(wordOption)) == 0 || 
+    strncmp(argv[1], charOption, strlen(charOption)) == 0)) {
+        fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
+        exit(EXIT_FAILURE);
+    } 
     // Logic to check option flag, changing the output
     if (strncmp(argv[1], lineOption, strlen(lineOption)) == 0) {
         int lineCount = 0;
         if (argv[2] == NULL) {
-                printf("%s", "Usage: ./wordcount requires an input file.\n");
+                fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
                 exit(EXIT_FAILURE);
             }
         for (int j = 2; j < argc; j++) {
         // Open file passed as an argument and assign that file stream to inFile
             if (argv[j] == NULL) {
-                printf("%s", "Usage: ./wordcount requires an input file.\n");
+                fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
                 exit(EXIT_FAILURE);
             }
             inFile = fileOpener(inFile, argv[j]);
@@ -125,7 +128,7 @@ int main(int argc, char* argv[]) {
         int wordCount = 0;
         for (int j = 2; j < argc; j++) {
             if (argv[j] == NULL) {
-                printf("%s", "Usage: ./wordcount requires an input file.\n");
+                fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
                 exit(EXIT_FAILURE);
             }
             inFile = fileOpener(inFile, argv[j]);
@@ -140,7 +143,7 @@ int main(int argc, char* argv[]) {
         int charCount = 0;
         for (int j = 2; j < argc; j++) {
             if (argv[j] == NULL) {
-                printf("%s", "Usage: ./wordcount requires an input file.\n");
+                fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
                 exit(EXIT_FAILURE);
             }
             inFile = fileOpener(inFile, argv[j]);
@@ -157,13 +160,13 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
     // Open file passed as an argument and assign that file stream to inFile
         if (argv[i] == NULL) {
-            printf("%s", "Usage: ./wordcount requires an input file.\n");
+            fprintf(stderr, "Usage: ./wordcount requires an input file.\n");
             exit(EXIT_FAILURE);
         }
         if (fopen(argv[i], "r") == NULL) {
-            printf("wordcount: %s: No such file or director\n", argv[i]);
+            fprintf(stderr, "wordcount: %s: No such file or director\n", argv[i]);
             printf("Total Lines: %d\n", totalNumOfLines);
-            exit(EXIT_SUCCESS);
+            exit(EXIT_FAILURE);
         }
         // Opening the inFile with the ith argument to read from stream
         inFile = fileOpener(inFile, argv[i]);
