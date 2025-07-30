@@ -1,0 +1,14 @@
+# Avoid adding certain files to repository
+
+# Object files, except demo binaries
+*.o
+!t9_lib.o
+!t9_lib_buggy.o
+
+# backup files
+*~
+
+# executables
+t9_demo
+t9_tests
+t9_tests_buggy
