@@ -10,7 +10,7 @@
 size_t build_dictionary(char* filename, Dictionary* dict_result) {
   // allocate space for the dictionary
   size_t dict_size = DEFAULT_DICT_SIZE;
-  Dictionary dict = (Dictionary) malloc(dict_size);
+  Dictionary dict = (Dictionary) malloc(sizeof(char*) * dict_size);
 
   // create a buffer to store the lines
   char* buffer = (char*) malloc(MAX_WORD_SIZE);
@@ -29,22 +29,27 @@ size_t build_dictionary(char* filename, Dictionary* dict_result) {
   if (buffer[word_len - 1] == '\n') {
     // Remove the newline from the word
     buffer[word_len - 1] = '\0';
-    //word_len--;
+    word_len--;
   }
   char* word;
   while (line) {  // line is not NULL
     // double the dictionary size if it's full
     if (word_count == dict_size) {
       dict_size *= 2;
-      dict = (Dictionary) realloc(dict, dict_size * 2);
+      // need to change the size of the resize to be 
+      //dict = (Dictionary) realloc(dict, dict_size * 2);
+      dict = (Dictionary) realloc(dict, sizeof(char*) * (dict_size * 2));
     }
     // save the word in a new allocated space and put it into the dictionary
-    word = malloc(sizeof(char) * word_len);
+    word = malloc(sizeof(char) * (word_len+1));
+    //word = malloc(sizeof(char) * (word_len));
     strncpy(word, buffer, word_len);
     dict[word_count] = word;
+    printf("STORED: '%s'\n", dict[word_count]);
 
     // go to the next line
     line = fgets(buffer, buffer_len, input);
+    //printf("READ: '%s' (len = %zu)\n", buffer, strlen(buffer));
     word_len = strlen(buffer);
     if (buffer[word_len - 1] == '\n') {
       word_len--;
@@ -77,6 +82,7 @@ int check_spelling(Dictionary dict, size_t size, char* word) {
   // typical binary search
   do {
     mid = (lo + hi) / 2;
+    printf("%s, %s\n", word, dict[mid]);
     cmp_result = strcmp(word, dict[mid]);
     if (cmp_result == 0) {
       return 1;

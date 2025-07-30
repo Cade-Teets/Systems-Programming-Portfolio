@@ -37,6 +37,7 @@ void show_results(FILE* stream,
                   int word_count, int paragraph_count, int typo_count);
 
 int main(int argc, char* argv[]) {
+  // char** dict is the type
   Dictionary dict;
   size_t dict_size;
   char buf[MAX_WORD_LENGTH];  // buffer for processing words
