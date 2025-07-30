@@ -19,9 +19,14 @@
 //    after the original filename.
 //
 
-// TODO: Import libraries needed to compile
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "SpellChecker.h"
+#include "Utils.h"
 
 #define TYPOS_SUFFIX ".typos"
+#define TYPOS_SUFFIX_LENGTH 6
 #define MAX_WORD_LENGTH 128
 
 // Prints a usage message to stderr
@@ -72,7 +77,9 @@ int main(int argc, char* argv[]) {
   // create the file for typos output, its name should be the input with the
   // ".typos" suffix appended
   FILE* typos_output = NULL;
-  char* typos_filename = (char*) malloc(strlen(input_filename));
+  // Create a character array pointer allocated to the length 
+  // of the input_filename plus 1 to grab the null terminator character
+  char* typos_filename = (char*) malloc(strlen(input_filename)+1+TYPOS_SUFFIX_LENGTH);
   strcpy(typos_filename, input_filename);
   strcat(typos_filename, TYPOS_SUFFIX);
   typos_output = fopen(typos_filename, "w");
@@ -96,6 +103,7 @@ int main(int argc, char* argv[]) {
     } else {  // a new word
       word_count++;
       // spell check
+      // Invalid read error here
       if (!check_spelling(dict, dict_size, buf)) {
         if (typos_output) {
           fprintf(typos_output, "%s\n", buf);
@@ -114,9 +122,15 @@ int main(int argc, char* argv[]) {
     printf("The text is empty.\n");
   }
 
-
+  // Close file streams
+  fclose(typos_output);
+  fclose(stats_output);
+  fclose(text);
   // TODO: Free all allocated resources.
-
+  free(typos_filename);
+  free_dictionary(dict,dict_size);
+  free(dict);
+  typos_filename = NULL;
   return EXIT_SUCCESS;
 }
 

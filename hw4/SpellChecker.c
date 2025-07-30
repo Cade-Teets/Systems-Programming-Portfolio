@@ -1,5 +1,9 @@
 // TODO: Import libraries needed to compile.
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "SpellChecker.h"
+#include "Utils.h"
 #define MAX_WORD_SIZE 128
 #define DEFAULT_DICT_SIZE (1 << 16)  // same as 2^16, an arbitrary starting size
 
@@ -25,7 +29,7 @@ size_t build_dictionary(char* filename, Dictionary* dict_result) {
   if (buffer[word_len - 1] == '\n') {
     // Remove the newline from the word
     buffer[word_len - 1] = '\0';
-    word_len--;
+    //word_len--;
   }
   char* word;
   while (line) {  // line is not NULL
@@ -36,7 +40,7 @@ size_t build_dictionary(char* filename, Dictionary* dict_result) {
     }
     // save the word in a new allocated space and put it into the dictionary
     word = malloc(sizeof(char) * word_len);
-    strncpy(word, buffer, word_len + 1);
+    strncpy(word, buffer, word_len);
     dict[word_count] = word;
 
     // go to the next line
@@ -54,6 +58,7 @@ size_t build_dictionary(char* filename, Dictionary* dict_result) {
 
   // clean up
   free(buffer);
+  fclose(input);
   return word_count;
 }
 
