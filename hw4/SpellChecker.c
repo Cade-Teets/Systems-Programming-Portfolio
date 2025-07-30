@@ -43,17 +43,21 @@ size_t build_dictionary(char* filename, Dictionary* dict_result) {
     // save the word in a new allocated space and put it into the dictionary
     word = malloc(sizeof(char) * (word_len+1));
     //word = malloc(sizeof(char) * (word_len));
+    if (word == NULL) {
+      exit(EXIT_FAILURE);
+    }
     strncpy(word, buffer, word_len);
+    word[word_len] = '\0';
     dict[word_count] = word;
-    printf("STORED: '%s'\n", dict[word_count]);
+    //printf("STORED: '%s'\n", dict[word_count]);
 
     // go to the next line
     line = fgets(buffer, buffer_len, input);
     //printf("READ: '%s' (len = %zu)\n", buffer, strlen(buffer));
     word_len = strlen(buffer);
-    if (buffer[word_len - 1] == '\n') {
+    if (buffer[word_len-1] == '\n') {
+      buffer[word_len-1] = '\0';
       word_len--;
-      buffer[word_len] = '\0';
     }
     word_count++;
   }
@@ -82,7 +86,7 @@ int check_spelling(Dictionary dict, size_t size, char* word) {
   // typical binary search
   do {
     mid = (lo + hi) / 2;
-    printf("%s, %s\n", word, dict[mid]);
+    //printf("%s, %s\n", word, dict[mid]);
     cmp_result = strcmp(word, dict[mid]);
     if (cmp_result == 0) {
       return 1;
