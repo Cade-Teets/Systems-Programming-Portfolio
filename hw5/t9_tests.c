@@ -12,7 +12,7 @@ suite("T9") {
     DestroyT9(dict);
   }
 
-  test("Testing PredictT9") {
+  test("Testing PredictT9 for proper word prediction") {
     // Test creation of T9
     T9* dict = InitializeEmptyT9();
     safe_assert(dict != NULL);
@@ -29,36 +29,35 @@ suite("T9") {
   // Additional Test 1: "Testing InitializeFromFileT9"
   // Designed to check if the InitializeFromFileT9 function 
   // will return null if an invalid file name is passed.
-test("Testing InitializeFromFileT9") {
-  T9* dict = InitializeEmptyT9();
-  safe_assert(dict != NULL);
-
-  char* fakeFileName = "foobar.txt";
+test("Testing InitializeFromFileT9 with valid file") {
   char* realFileName = "dictionary.txt";
+  T9* dict = InitializeFromFileT9(realFileName);
   
-  dict = InitializeFromFileT9(fakeFileName);
-  safe_assert(dict == NULL);
-  
-  dict = InitializeFromFileT9(realFileName);
   safe_assert(dict != NULL);
-
+  
   DestroyT9(dict);
 
 }
-
-// Additional Test 2: "Testing AddWordToT9 with nonwords"
-// should be able to test that it skips invalid words
-// the example being used is a space 
-// test("Testing AddWordToT9 with nonwords") {
-//   T9* dict = InitializeEmptyT9();
+// Additional Test 2: "Testing InitializeFromFileT9 with invalid file"
+// test("Testing InitializeFromFileT9 with invalid file") {
+//   char* fakeFileName = "foobar.txt";
+//   T9* dict = InitializeFromFileT9(fakeFileName);
+  
 //   safe_assert(dict != NULL);
+//   safe_assert(dict == NULL);
+  
+//   DestroyT9(dict);
+// }
 
+// Additional Test 4: "Testing AddWordToT9 with word in uppercase"
+ test("Testing AddWordToT9 with word in uppercase") {
+  T9* dict = InitializeEmptyT9();
 
-//   // adding capital letter, which should return NULL
-//   char* uppercaseInput = "CAT";
-//   AddWordToT9(dict, uppercaseInput);
-//   char* space = PredictT9(dict, "228");
-//   safe_assert (space == NULL);
+  // adding capital letter, which should return NULL
+  char* uppercaseInput = "CAT";
+  AddWordToT9(dict, uppercaseInput);
+  char* space = PredictT9(dict, "228");
+  safe_assert (space == NULL);
   
 //   // adding duplicate word "cat"
 //   char* invalidInput = "cat";
@@ -85,13 +84,12 @@ test("Testing InitializeFromFileT9") {
 
 //   //AssertReturnedStringEquals("", word);
 //   //AssertReturnedStringEquals(NULL, word);
-//   DestroyT9(dict);
-// }
+  DestroyT9(dict);
+}
 
-// Additional Test 3: "Testing PredictT9 with forbidden inputs"
+// Additional Test 3: "Testing PredictT9 with NULL"
 test("Testing PredictT9 with forbidden inputs") {
   T9* dict = InitializeEmptyT9();
-  safe_assert(dict != NULL);
 
   char* dictionary = "dictionary.txt";
   dict = InitializeFromFileT9(dictionary);
@@ -99,18 +97,6 @@ test("Testing PredictT9 with forbidden inputs") {
   // Test passing in a NULL nums, should get out NULL
   char* invalid_input = PredictT9(dict, NULL);
   safe_assert(invalid_input == NULL)
-  
-  /*
-  Post: in ASCII numbers, nums needs to check 
-  if (num > 47 && num < 58 || nums == 35)
-  */
-  
-  invalid_input = PredictT9(dict, "10");
-  safe_assert(invalid_input == NULL);
-
-  invalid_input = PredictT9(dict, "");
-  safe_assert(invalid_input == NULL);
-
   DestroyT9(dict);
 }
 
@@ -127,12 +113,20 @@ test("Testing PredictT9 on small dictionary") {
   DestroyT9(dict);
 }
 
-// Additional Test 5 : "Testing PredictT9 with improperly formatted inputs"
-test("Testing PredictT9 with improperly formatted inputs") {
+// Additional Test 5 : "Testing PredictT9 with only a pound"
+test("Testing PredictT9 with only a pound") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
 
   char* invalid_input1 = PredictT9(dict, "#");
   safe_assert(invalid_input1 == NULL);
+  
+
+  DestroyT9(dict);
+}
+
+// Additional Test 6: "Testing PredictT9 with number after pount"
+test("Testing PredictT9 with number after pound") {
+  T9* dict = InitializeFromFileT9("dictionary.txt");
   
   char* invalid_input2 = PredictT9(dict, "#1");
   safe_assert(invalid_input2 == NULL);
@@ -140,12 +134,20 @@ test("Testing PredictT9 with improperly formatted inputs") {
   DestroyT9(dict);
 }
 
-// Additional Test 6: "Testing PredictT9 on empty dictionary"
+// Additional Test 7: "Testing PredictT9 on empty dictionary"
 test("Testing PredictT9 on empty dictionary") {
   T9* dict = InitializeEmptyT9();
+  
   char* nullReturn = PredictT9(dict, "wow");
   safe_assert(nullReturn == NULL);
+  
+  DestroyT9(dict);
+}
 
+// Additional Test 8: "Testing PredictT9 on word not in dictionary"
+test("Testing PredictT9 on word not in dictionary") {
+  T9* dict = InitializeEmptyT9();
+  
   AddWordToT9(dict, "wow");
   AddWordToT9(dict, "low");
   
@@ -155,17 +157,30 @@ test("Testing PredictT9 on empty dictionary") {
   DestroyT9(dict);
 }
 
-// Additional Test 7
-//test("Testing __") 
+// Additional Test 9 "Testing PredictT9 with num > 9"
+test("Testing PredictT9 with num > 9") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
 
-// Additional Test 8
-//test("Testing ")
+  char* invalid_input = PredictT9(dict, "10");
+  safe_assert(invalid_input == NULL);
 
-// Additional Test 9
-//test("Testing ")
+  DestroyT9(dict);
+}
 
-// Additional Test 10
-//test("Testing ")
+// Additional Test 10: "Testing PredictT9 with no input"
+test("Testing PredictT9 with no input") {
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* invalid_input = PredictT9(dict, "");
+  safe_assert(invalid_input == NULL);
+
+  DestroyT9(dict);
+}
+
 /*
   char* validInput1 = "cat";
   char* validInput2 = "rat";
