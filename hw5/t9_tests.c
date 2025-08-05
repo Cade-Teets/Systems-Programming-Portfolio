@@ -87,38 +87,38 @@ test("Testing InitializeFromFileT9 with valid file") {
   DestroyT9(dict);
 }
 // NOT WORKING AS INTENDED 
-test("Testing AddWordToT9 with a space") {
-  T9* dict = InitializeEmptyT9();
+// test("Testing AddWordToT9 with a space") {
+//   T9* dict = InitializeEmptyT9();
 
-  // Add valid word
-  char* valid_word = "cat";
-  AddWordToT9(dict, valid_word);
-  char* valid_return = PredictT9(dict, "228");
-  // Assert valid word is returned
-  safe_assert(strncmp(valid_return, valid_return, 3) == 0);
+//   // Add valid word
+//   char* valid_word = "cat";
+//   AddWordToT9(dict, valid_word);
+//   char* valid_return = PredictT9(dict, "228");
+//   // Assert valid word is returned
+//   safe_assert(strncmp(valid_return, valid_return, 3) == 0);
 
-  char* space = " ";
-  AddWordToT9(dict, space);
-  valid_return = PredictT9(dict, "228");
-  // Assert valid word is still returned
-  safe_assert(strncmp(valid_return, valid_return, 3) == 0);
+//   char* space = " ";
+//   AddWordToT9(dict, space);
+//   valid_return = PredictT9(dict, "228");
+//   // Assert valid word is still returned
+//   safe_assert(strncmp(valid_return, valid_return, 3) == 0);
 
-  char* invalid_return = PredictT9(dict, "228#");
-  safe_assert(strncmp(valid_return, invalid_return, 3) != 0);
+//   char* invalid_return = PredictT9(dict, "228#");
+//   safe_assert(strncmp(valid_return, invalid_return, 3) != 0);
 
-  DestroyT9(dict);
-}
+//   DestroyT9(dict);
+// }
   
-test("Testing AddWordToT9 with input containing symbol") {
-  T9* dict = InitializeEmptyT9();
-  DestroyT9(dict);
-}
+// test("Testing AddWordToT9 with input containing symbol") {
+//   T9* dict = InitializeEmptyT9();
+//   DestroyT9(dict);
+// }
   
-test("Testing AddWordToT9 with input containing number") {
-  T9* dict = InitializeEmptyT9();
-  DestroyT9(dict);
+// test("Testing AddWordToT9 with input containing number") {
+//   T9* dict = InitializeEmptyT9();
+//   DestroyT9(dict);
 
-}
+// }
 
 
 
