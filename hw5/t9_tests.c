@@ -38,16 +38,39 @@ test("Testing InitializeFromFileT9 with valid file") {
   DestroyT9(dict);
 
 }
+
 //Additional Test 2: "Testing InitializeFromFileT9 with invalid file"
-// test("Testing InitializeFromFileT9 with invalid file") {
-//   char* fakeFileName = "foobar.txt";
-//   T9* dict = InitializeFromFileT9(fakeFileName);
+test("Testing InitializeFromFileT9 with dictionary.txt file") {
+  char* fakeFileName = "foobar.txt";
+  T9* dict = InitializeFromFileT9(fakeFileName);
   
-//   safe_assert(dict != NULL);
-//   safe_assert(dict == NULL);
+  printf("%p", dict);
+  //safe_assert(dict != NULL);
+  safe_assert(dict == 0);
   
-//   DestroyT9(dict);
-// }
+  //DestroyT9(dict);
+}
+
+//Additional Test 2: "Testing InitializeFromFileT9 with invalid file"
+test("Testing InitializeFromFileT9 with NULL") {
+  T9* dict = InitializeFromFileT9(NULL);
+  
+  //printf("%p", dict);
+  //safe_assert(dict != NULL);
+  safe_assert(dict == NULL);
+  
+  //DestroyT9(dict);
+}
+//Additional Test 2: "Testing InitializeFromFileT9 with invalid file"
+test("Testing InitializeFromFileT9 with small_dict file") {
+  char* fileName = "small_dictionary.txt";
+  T9* dict = InitializeFromFileT9(fileName);
+  
+  printf("%p", dict);
+  safe_assert(dict != NULL);
+  
+  DestroyT9(dict);
+}
 
 // Additional Test 4: "Testing AddWordToT9 with word in uppercase"
  test("Testing AddWordToT9 with word in uppercase") {
@@ -137,7 +160,7 @@ test("Testing PredictT9 with NULL input") {
   DestroyT9(dict);
 }
 
-// Additional Test 4: "Testing PredictT9 on small dictionary"
+// Additional Test 4: "Testing PredictT9 on words not in small dictionary"
 test("Testing PredictT9 on small dictionary") {
   T9* dict = InitializeFromFileT9("small_dictionary.txt");
 
