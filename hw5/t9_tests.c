@@ -29,14 +29,15 @@ suite("T9") {
   // Additional Test 1: "Testing InitializeFromFileT9"
   // Designed to check if the InitializeFromFileT9 function 
   // will return null if an invalid file name is passed.
-test("Testing InitializeFromFileT9 with valid file") {
+test("Testing InitializeFromFileT9 with dictionary.txt") {
   char* realFileName = "dictionary.txt";
   T9* dict = InitializeFromFileT9(realFileName);
   
   safe_assert(dict != NULL);
-  
-  DestroyT9(dict);
+  char* word = PredictT9(dict, "228");
+  AssertReturnedStringEquals("act", word);
 
+  DestroyT9(dict);
 }
 test("Testing InitializeFromFileT9 with oneline_empty_dictionary.txt") {
   char* realFileName = "oneline_empty_dictionary.txt";
@@ -47,15 +48,12 @@ test("Testing InitializeFromFileT9 with oneline_empty_dictionary.txt") {
   DestroyT9(dict);
 }
 //Additional Test 2: "Testing InitializeFromFileT9 with dictionary.txt file"
-test("Testing InitializeFromFileT9 with dictionary.txt file") {
+test("Testing InitializeFromFileT9 with invalid fileName") {
   char* fakeFileName = "foobar.txt";
   T9* dict = InitializeFromFileT9(fakeFileName);
   
-  //printf("%p", dict);
-  //safe_assert(dict != NULL);
   safe_assert(dict == 0);
   
-  //DestroyT9(dict);
 }
 
 //Additional Test 3: "Testing InitializeFromFileT9 with NULL"
@@ -70,12 +68,11 @@ test("Testing InitializeFromFileT9 with NULL") {
   
   safe_assert(dict == NULL);
 }
-//Additional Test 4: "Testing InitializeFromFileT9 with invalid file"
+//Additional Test 4: "Testing InitializeFromFileT9 with small_dict"
 test("Testing InitializeFromFileT9 with small_dict file") {
   char* fileName = "small_dictionary.txt";
   T9* dict = InitializeFromFileT9(fileName);
   
-  //printf("%p", dict);
   safe_assert(dict != NULL);
   
   DestroyT9(dict);
@@ -89,15 +86,25 @@ test("Testing Tesing InitializeFileFromT9 with empty_dictionary") {
   safe_assert(dict != NULL);
   DestroyT9(dict);
 }
-//Additional Test #: "Tesing InitializeFileFromT9 with empty_dict"
-test("Testing Tesing InitializeFileFromT9 with invalid_dictionary") {
-  char* invalid_dict = "invalid_dictionary.txt";
-  T9* dict = InitializeFromFileT9(invalid_dict);
+//Additional Test #: "Tesing InitializeFileFromT9 with file of symbols
+// test("Testing InitializeFileFromT9 with invalid_dictionary") {
+//   char* invalid_dict = "invalid_dictionary.txt";
+//   T9* dict = InitializeFromFileT9(invalid_dict);
 
-  safe_assert(dict != NULL);
-  //DestroyT9(dict);
-}
+//   safe_assert(dict == NULL);
+// }
 
+
+// Additional Test #: Testing AddWordToT9 NULL
+// test("Testing AddWordToT9 with NULL"){
+//   T9* dict = InitializeEmptyT9();
+  
+//   AddWordToT9(dict, NULL);
+
+//   safe_assert(dict == NULL);
+  
+
+// }
 // Additional Test #: Testing AddWordToT9 with empty string
 test("Testing AddWordToT9 with empty string"){
   T9* dict = InitializeEmptyT9();
@@ -115,9 +122,12 @@ test("Testing AddWordToT9 with word containing number"){
 
 }
 // Additional Test #: Testing AddWordToT9 with
-test("Testing AddWordToT9 with "){
-  
-}
+// test("Testing AddWordToT9 with invalid chars and not asserting"){
+//   T9* dict = InitializeEmptyT9();
+//   AddWordToT9(dict, "ca t");
+//   char* cat = PredictT9(dict, "228");
+//   AssertReturnedStringEquals(NULL, cat);
+// }
 
 // Additional Test 4: "Testing AddWordToT9 with word in uppercase"
  test("Testing AddWordToT9 with word in uppercase") {
@@ -199,7 +209,16 @@ test("Testing PredictT9 on small dictionary") {
   
   DestroyT9(dict);
 }
+// Additional Test 4: "Testing PredictT9 on words not in small dictionary"
+test("Testing PredictT9 on small dictionary") {
+  T9* dict = InitializeEmptyT9();
 
+  // koala (56252)
+  char* invalid_input = PredictT9(dict, "56252");
+  safe_assert(invalid_input == NULL);
+  
+  DestroyT9(dict);
+}
 // Additional Test 5 : "Testing PredictT9 with only a pound"
 test("Testing PredictT9 with only a pound") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
@@ -272,6 +291,15 @@ test("Testing AddWordToT9 and PredictT9 for given word") {
   // Assert valid word is returned
   AssertReturnedStringEquals(valid_return, valid_word);
 }  
+test("Testing AddWordToT9 and PredictT9 space in empty dict") {
+  T9* dict = InitializeEmptyT9();
+
+  // Add invalid word
+  AddWordToT9(dict, "");
+  char* invalid_return = PredictT9(dict, "");
+  // Assert valid word is returned
+  safe_assert (invalid_return == NULL);
+}  
 
 test("Testing AddWordToT9 and PredictT9 for similar words") {
   T9* dict = InitializeEmptyT9();
@@ -324,7 +352,17 @@ test("Testing AddWordToT9 and PredictT9 for similar words in reverse") {
 
   AssertReturnedStringEquals(cats, valid_return);
 }
+test("Testing AddWordToT9 and PredictT9 for words with extra num") {
+  T9* dict = InitializeEmptyT9();
 
+  // Add valid words
+  char* cat = "cat";
+  
+  AddWordToT9(dict, cat);
+  char* invalid_return = PredictT9(dict, "2287");
+
+  safe_assert (invalid_return == NULL);
+}
 // Additional Test 9 "Testing PredictT9 with num > 9"
 test("Testing PredictT9 with num > 9") {
   /*
@@ -351,6 +389,21 @@ test("Testing PredictT9 with three pounds") {
 
   DestroyT9(dict);
 }
+
+// Additional Test 10: "Testing PredictT9 with three pounds after input"
+test("Testing PredictT9 with three pounds after input") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* invalid_input = PredictT9(dict, "228###");
+  safe_assert(invalid_input == NULL);
+
+  DestroyT9(dict);
+}
+
 // Additional Test 10: "Testing PredictT9 with no input"
 test("Testing PredictT9 with no input") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
