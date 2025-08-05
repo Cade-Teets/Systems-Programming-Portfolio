@@ -131,7 +131,7 @@ test("Testing AddWordToT9 with word containing number"){
 // }
 
 // Additional Test 4: "Testing AddWordToT9 with word in uppercase"
- test("Testing AddWordToT9 with word in uppercase") {
+ test("Testing AddWordToT9 and PredictT9 with word in uppercase") {
   T9* dict = InitializeEmptyT9();
 
   // adding capital letter, which should return NULL
@@ -139,7 +139,7 @@ test("Testing AddWordToT9 with word containing number"){
   AddWordToT9(dict, uppercaseInput);
   char* space = PredictT9(dict, "228");
   
-  safe_assert (space == NULL);
+  safe_assert(space == NULL);
   
   DestroyT9(dict);
 }
@@ -378,6 +378,19 @@ test("Testing PredictT9 with three pounds") {
 
   DestroyT9(dict);
 }
+// Additional Test 10: "Testing PredictT9 with three pounds and return valid word"
+test("Testing PredictT9 with three pounds and return a valid word") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* valid_return = PredictT9(dict, "343###");
+  AssertReturnedStringEquals("fie", valid_return);
+
+  DestroyT9(dict);
+}
 // Additional Test 10: "Testing PredictT9 with 0"
 test("Testing PredictT9 with 0") {
   /*
@@ -387,6 +400,32 @@ test("Testing PredictT9 with 0") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
 
   char* invalid_input = PredictT9(dict, "0");
+  safe_assert(invalid_input == NULL);
+
+  DestroyT9(dict);
+}
+// Additional Test 10: "Testing PredictT9 with !"
+test("Testing PredictT9 with !") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* invalid_input = PredictT9(dict, "!");
+  safe_assert(invalid_input == NULL);
+
+  DestroyT9(dict);
+}
+// Additional Test 10: "Testing PredictT9 with ?"
+test("Testing PredictT9 with ?") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* invalid_input = PredictT9(dict, "?");
   safe_assert(invalid_input == NULL);
 
   DestroyT9(dict);
