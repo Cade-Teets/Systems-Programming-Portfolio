@@ -22,6 +22,7 @@ suite("T9") {
     AddWordToT9(dict, "cool");
 
     char* word = PredictT9(dict, "2665#");
+    safe_assert(word != NULL);
     AssertReturnedStringEquals("cool", word);
 
     DestroyT9(dict);
@@ -35,6 +36,7 @@ test("Testing InitializeFromFileT9 with dictionary.txt") {
   
   safe_assert(dict != NULL);
   char* word = PredictT9(dict, "228");
+  safe_assert(word != NULL);
   AssertReturnedStringEquals("act", word);
 
   DestroyT9(dict);
@@ -95,24 +97,23 @@ test("Testing Tesing InitializeFileFromT9 with empty_dictionary") {
 // }
 
 
-// Additional Test #: Testing AddWordToT9 NULL
-// test("Testing AddWordToT9 with NULL"){
-//   T9* dict = InitializeEmptyT9();
+//Additional Test #: Testing AddWordToT9 NULL without it breaking 
+test("Testing AddWordToT9 with NULL"){
+  T9* dict = InitializeEmptyT9();
   
-//   AddWordToT9(dict, NULL);
+  AddWordToT9(dict, NULL);
 
-//   safe_assert(dict == NULL);
-  
-
-// }
-// Additional Test #: Testing AddWordToT9 with empty string
+  //safe_assert(dict != NULL);
+  DestroyT9(dict);
+}
+// Additional Test #: Testing AddWordToT9 with empty string without it breaking
 test("Testing AddWordToT9 with empty string"){
   T9* dict = InitializeEmptyT9();
   
   char* space = " ";
   AddWordToT9(dict, space);
   
-
+  DestroyT9(dict);
 }
 // Additional Test #: Testing AddWordToT9 with
 test("Testing AddWordToT9 with word containing number"){
@@ -137,16 +138,9 @@ test("Testing AddWordToT9 with word containing number"){
   char* uppercaseInput = "CAT";
   AddWordToT9(dict, uppercaseInput);
   char* space = PredictT9(dict, "228");
-  safe_assert (space == NULL);
-
   
-//   //AssertReturnedStringEquals(invalidInput, space);
-//   // returns actual value less than 0, because the actual comparison
-//   // in this method will 
-
-
-//   //AssertReturnedStringEquals("", word);
-//   //AssertReturnedStringEquals(NULL, word);
+  safe_assert (space == NULL);
+  
   DestroyT9(dict);
 }
 // NOT WORKING AS INTENDED 
@@ -171,21 +165,6 @@ test("Testing AddWordToT9 with word containing number"){
 
 //   DestroyT9(dict);
 // }
-  
-// test("Testing AddWordToT9 with input containing symbol") {
-//   T9* dict = InitializeEmptyT9();
-//   DestroyT9(dict);
-// }
-  
-// test("Testing AddWordToT9 with input containing number") {
-//   T9* dict = InitializeEmptyT9();
-//   DestroyT9(dict);
-
-// }
-
-
-
-
 
 // Additional Test 3: "Testing PredictT9 with NULL input"
 test("Testing PredictT9 with NULL input") {
@@ -230,7 +209,7 @@ test("Testing PredictT9 with only a pound") {
   DestroyT9(dict);
 }
 
-// Additional Test 6: "Testing PredictT9 with number after pount"
+// Additional Test 6: "Testing PredictT9 with number after pound  "
 test("Testing PredictT9 with number after pound") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
   
@@ -257,7 +236,7 @@ test("Testing PredictT9 on word not in dictionary") {
   AddWordToT9(dict, "wow");
   AddWordToT9(dict, "low");
   
-  char* invalid_input1 = PredictT9(dict, "869"); //tow
+  char* invalid_input1 = PredictT9(dict, "869"); //tow (869)
   safe_assert(invalid_input1 == NULL);
 
   DestroyT9(dict);
@@ -271,17 +250,18 @@ test("Testing AddWordToT9 and PredictT9 for duplicate word") {
 
   // add "cat" again and check if it returns
   AddWordToT9(dict, cat);
-  char* valid_return = PredictT9(dict, "228");
-  AssertReturnedStringEquals(cat, valid_return);
+  char* word = PredictT9(dict, "228");
+  safe_assert(word != NULL);
+  AssertReturnedStringEquals(cat, word);
 
   char* cat1 = PredictT9(dict, "228#");
   
   safe_assert(cat1 == NULL);
-
+  DestroyT9(dict);
 }
 
 
-test("Testing AddWordToT9 and PredictT9 for given word") {
+test("Testing AddWordToT9 and PredictT9 a valid word in empty dictionary") {
   T9* dict = InitializeEmptyT9();
 
   // Add valid word
@@ -289,6 +269,7 @@ test("Testing AddWordToT9 and PredictT9 for given word") {
   AddWordToT9(dict, valid_word);
   char* valid_return = PredictT9(dict, "228");
   // Assert valid word is returned
+  safe_assert(valid_return != NULL);
   AssertReturnedStringEquals(valid_return, valid_word);
 }  
 test("Testing AddWordToT9 and PredictT9 space in empty dict") {
@@ -299,20 +280,22 @@ test("Testing AddWordToT9 and PredictT9 space in empty dict") {
   char* invalid_return = PredictT9(dict, "");
   // Assert valid word is returned
   safe_assert (invalid_return == NULL);
+  DestroyT9(dict);
 }  
 
 test("Testing AddWordToT9 and PredictT9 for similar words") {
   T9* dict = InitializeEmptyT9();
 
   // Add valid words
-  char* cat = "cat";
-  char* cats = "cats";
+  char* cat = "cat"; // 228
+  char* cats = "cats"; // 2287
   AddWordToT9(dict, cat);
   AddWordToT9(dict, cats);
 
   char* valid_return = PredictT9(dict, "228");
-
+  safe_assert(valid_return != NULL);
   AssertReturnedStringEquals(cat, valid_return);
+  DestroyT9(dict);
 }
 
 test("Testing AddWordToT9 and PredictT9 for NULL") {
@@ -323,7 +306,7 @@ test("Testing AddWordToT9 and PredictT9 for NULL") {
   char* word = PredictT9(dict, NULL);
 
   safe_assert(word == NULL);
-
+  DestroyT9(dict);
 }
 test("Testing AddWordToT9 and PredictT9 for multiple valid inputs") {
   T9* dict = InitializeEmptyT9();
@@ -335,12 +318,15 @@ test("Testing AddWordToT9 and PredictT9 for multiple valid inputs") {
   char* cat = PredictT9(dict, "228");
   char* rat = PredictT9(dict, "728");
 
+  safe_assert(cat != NULL);
+  safe_assert(rat != NULL);
   AssertReturnedStringEquals(validInput1, cat);
   AssertReturnedStringEquals(validInput2, rat);
+  DestroyT9(dict);
 }
+
 test("Testing AddWordToT9 and PredictT9 for similar words in reverse") {
   T9* dict = InitializeEmptyT9();
-
   // Add valid words
   char* cats = "cats";
   char* cat = "cat";
@@ -350,7 +336,9 @@ test("Testing AddWordToT9 and PredictT9 for similar words in reverse") {
 
   char* valid_return = PredictT9(dict, "2287");
 
+  safe_assert(valid_return != NULL);
   AssertReturnedStringEquals(cats, valid_return);
+  DestroyT9(dict);
 }
 test("Testing AddWordToT9 and PredictT9 for words with extra num") {
   T9* dict = InitializeEmptyT9();
@@ -362,6 +350,7 @@ test("Testing AddWordToT9 and PredictT9 for words with extra num") {
   char* invalid_return = PredictT9(dict, "2287");
 
   safe_assert (invalid_return == NULL);
+  DestroyT9(dict);
 }
 // Additional Test 9 "Testing PredictT9 with num > 9"
 test("Testing PredictT9 with num > 9") {
