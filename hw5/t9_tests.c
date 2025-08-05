@@ -49,7 +49,7 @@ test("Testing InitializeFromFileT9 with oneline_empty_dictionary.txt") {
   
   DestroyT9(dict);
 }
-//Additional Test 2: "Testing InitializeFromFileT9 with dictionary.txt file"
+//Additional Test 2: "Testing InitializeFromFileT9 with invalidFile"
 test("Testing InitializeFromFileT9 with invalid fileName") {
   char* fakeFileName = "foobar.txt";
   T9* dict = InitializeFromFileT9(fakeFileName);
@@ -62,7 +62,7 @@ test("Testing InitializeFromFileT9 with invalid fileName") {
 test("Testing InitializeFromFileT9 with NULL") {
   T9* dict = InitializeFromFileT9(NULL);
   
-  safe_assert(dict == NULL);
+  safe_assert(dict == 0);
 }
 //Additional Test 3: "Testing InitializeFromFileT9 with space"
   test("Testing InitializeFromFileT9 with empty fileName") {
@@ -188,8 +188,8 @@ test("Testing PredictT9 on small dictionary") {
   
   DestroyT9(dict);
 }
-// Additional Test 4: "Testing PredictT9 on words not in small dictionary"
-test("Testing PredictT9 on small dictionary") {
+// Additional Test 4: "Testing PredictT9 on word not in dictionary"
+test("Testing PredictT9 word not in dicitonary") {
   T9* dict = InitializeEmptyT9();
 
   // koala (56252)
@@ -270,7 +270,7 @@ test("Testing AddWordToT9 and PredictT9 a valid word in empty dictionary") {
   char* valid_return = PredictT9(dict, "228");
   // Assert valid word is returned
   safe_assert(valid_return != NULL);
-  AssertReturnedStringEquals(valid_return, valid_word);
+  AssertReturnedStringEquals(valid_word, valid_return);
 }  
 test("Testing AddWordToT9 and PredictT9 space in empty dict") {
   T9* dict = InitializeEmptyT9();
@@ -374,6 +374,19 @@ test("Testing PredictT9 with three pounds") {
   T9* dict = InitializeFromFileT9("dictionary.txt");
 
   char* invalid_input = PredictT9(dict, "###");
+  safe_assert(invalid_input == NULL);
+
+  DestroyT9(dict);
+}
+// Additional Test 10: "Testing PredictT9 with 0"
+test("Testing PredictT9 with 0") {
+  /*
+  Post: in ASCII numbers, nums needs to check 
+  if (num > 47 && num < 58 || nums == 35)
+  */
+  T9* dict = InitializeFromFileT9("dictionary.txt");
+
+  char* invalid_input = PredictT9(dict, "0");
   safe_assert(invalid_input == NULL);
 
   DestroyT9(dict);
