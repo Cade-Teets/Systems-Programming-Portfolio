@@ -38,7 +38,14 @@ test("Testing InitializeFromFileT9 with valid file") {
   DestroyT9(dict);
 
 }
-
+test("Testing InitializeFromFileT9 with oneline_empty_dictionary.txt") {
+  char* realFileName = "oneline_empty_dictionary.txt";
+  T9* dict = InitializeFromFileT9(realFileName);
+  
+  safe_assert(dict != NULL);
+  
+  DestroyT9(dict);
+}
 //Additional Test 2: "Testing InitializeFromFileT9 with dictionary.txt file"
 test("Testing InitializeFromFileT9 with dictionary.txt file") {
   char* fakeFileName = "foobar.txt";
@@ -74,6 +81,23 @@ test("Testing InitializeFromFileT9 with small_dict file") {
   DestroyT9(dict);
 }
 
+//Additional Test #: "Tesing InitializeFileFromT9 with empty_dict"
+test("Testing Tesing InitializeFileFromT9 with empty_dictionary") {
+  char* empty_dict = "empty_dictionary.txt";
+  T9* dict = InitializeFromFileT9(empty_dict);
+
+  safe_assert(dict != NULL);
+  DestroyT9(dict);
+}
+//Additional Test #: "Tesing InitializeFileFromT9 with empty_dict"
+test("Testing Tesing InitializeFileFromT9 with invalid_dictionary") {
+  char* invalid_dict = "invalid_dictionary.txt";
+  T9* dict = InitializeFromFileT9(invalid_dict);
+
+  safe_assert(dict != NULL);
+  //DestroyT9(dict);
+}
+
 // Additional Test #: Testing AddWordToT9 with empty string
 test("Testing AddWordToT9 with empty string"){
   T9* dict = InitializeEmptyT9();
@@ -84,8 +108,11 @@ test("Testing AddWordToT9 with empty string"){
 
 }
 // Additional Test #: Testing AddWordToT9 with
-test("Testing AddWordToT9 with "){
-  
+test("Testing AddWordToT9 with word containing number"){
+  T9* dict = InitializeEmptyT9();
+
+  AddWordToT9(dict, "w0rld");
+
 }
 // Additional Test #: Testing AddWordToT9 with
 test("Testing AddWordToT9 with "){
@@ -101,23 +128,6 @@ test("Testing AddWordToT9 with "){
   AddWordToT9(dict, uppercaseInput);
   char* space = PredictT9(dict, "228");
   safe_assert (space == NULL);
-  
-//   // adding duplicate word "cat"
-//   char* invalidInput = "cat";
-//   AddWordToT9(dict, invalidInput);
-//   //char* cat = PredictT9(dict, "228");
-//   //int comparison = strncmp(invalidInput, cat, 3);
-//   //safe_assert(comparison == 0);
-
-//   // add "cat" again and check if it returns
-//   AddWordToT9(dict, invalidInput);
-//   char* cat = PredictT9(dict, "228");
-//   int comparison = strncmp(invalidInput, cat, 3);
-//   safe_assert(comparison == 0);
-
-//   char* cat1 = PredictT9(dict, "228#");
-//   comparison = strncmp(cat, cat1, 3);
-//   safe_assert(comparison != 0);
 
   
 //   //AssertReturnedStringEquals(invalidInput, space);
@@ -169,10 +179,7 @@ test("Testing AddWordToT9 with "){
 
 // Additional Test 3: "Testing PredictT9 with NULL input"
 test("Testing PredictT9 with NULL input") {
-  T9* dict = InitializeEmptyT9();
-
-  char* dictionary = "dictionary.txt";
-  dict = InitializeFromFileT9(dictionary);
+  T9* dict = InitializeFromFileT9("dictionary.txt");
 
   // Test passing in a NULL nums, should get out NULL
   char* invalid_input = PredictT9(dict, NULL);
@@ -236,6 +243,25 @@ test("Testing PredictT9 on word not in dictionary") {
 
   DestroyT9(dict);
 }
+test("Testing AddWordToT9 and PredictT9 for duplicate word") {
+  T9* dict = InitializeEmptyT9();
+  // adding duplicate word "cat"
+  char* cat = "cat";
+  AddWordToT9(dict, cat);
+  
+
+  // add "cat" again and check if it returns
+  AddWordToT9(dict, cat);
+  char* valid_return = PredictT9(dict, "228");
+  AssertReturnedStringEquals(cat, valid_return);
+
+  char* cat1 = PredictT9(dict, "228#");
+  
+  safe_assert(cat1 == NULL);
+
+}
+
+
 test("Testing AddWordToT9 and PredictT9 for given word") {
   T9* dict = InitializeEmptyT9();
 
@@ -261,6 +287,29 @@ test("Testing AddWordToT9 and PredictT9 for similar words") {
   AssertReturnedStringEquals(cat, valid_return);
 }
 
+test("Testing AddWordToT9 and PredictT9 for NULL") {
+  T9* dict = InitializeEmptyT9();
+
+  AddWordToT9(dict, NULL);
+
+  char* word = PredictT9(dict, NULL);
+
+  safe_assert(word == NULL);
+
+}
+test("Testing AddWordToT9 and PredictT9 for multiple valid inputs") {
+  T9* dict = InitializeEmptyT9();
+  char* validInput1 = "cat";
+  char* validInput2 = "rat";
+  AddWordToT9(dict, validInput1);
+  AddWordToT9(dict, validInput2);
+
+  char* cat = PredictT9(dict, "228");
+  char* rat = PredictT9(dict, "728");
+
+  AssertReturnedStringEquals(validInput1, cat);
+  AssertReturnedStringEquals(validInput2, rat);
+}
 test("Testing AddWordToT9 and PredictT9 for similar words in reverse") {
   T9* dict = InitializeEmptyT9();
 
@@ -312,18 +361,6 @@ test("Testing PredictT9 with no input") {
   DestroyT9(dict);
 }
 
-/*
-  char* validInput1 = "cat";
-  char* validInput2 = "rat";
-  AddWordToT9(dict, validInput1);
-  AddWordToT9(dict, validInput2);
-
-  char* cat = PredictT9(dict, "228");
-  char* rat = PredictT9(dict, "728");
-
-  AssertReturnedStringEquals(validInput1, cat);
-  AssertReturnedStringEquals(validInput2, rat);
-*/
 }
 
 void AssertReturnedStringEquals(char* expected, char* actual) {
