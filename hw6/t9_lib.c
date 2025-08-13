@@ -5,8 +5,14 @@
     Date: 8/10/25
 
     Citations: [List external resources or people you consulted]
-
+    https://www.geeksforgeeks.org/c/strncpy-function-in-c/
+    https://www.geeksforgeeks.org/c/strlen-function-in-c/
     Description: [Brief description of the purpose of this program]
+        Program can create a dictionary to hold words in a Trie.
+    The words are converted into T9 codes and to get a word
+    one uses the T9 code and a word is returned. Multiple
+    words can share the same code and are iterated by using
+    the pound key after the code.
 */
 
 #include <stddef.h>
@@ -29,7 +35,7 @@ T9* InitializeEmptyT9() {
 // pointer is different than this
     T9* dict = (T9*) malloc(sizeof(T9));
     if (dict == NULL) {
-        // error
+        return NULL;
     }
     // Set all the field pointers to NULL
     InitializeDefaultFields(dict);
@@ -71,7 +77,6 @@ void AddWordToT9(T9* dict, const char* word) {
         if (code == NULL) {
                 return;
         }
-        // T9* curr = dict;
         // Check if all letters in word are valid,
         // then call the CharToT9Code
         int isWord = 1;
@@ -123,39 +128,9 @@ char* PredictT9(T9* dict, const char* nums) {
 
     // Check the result and return the correct word
     if (last_node != NULL && last_node->list_count > num_pounds) {
-        const char* word_to_return = last_node->val[num_pounds];
-        char* new_word = (char*) malloc(strlen(word_to_return) + 1);
-        if (new_word == NULL) {
-            return NULL;
-        }
-        // strcpy(new_string, word_to_return);
-        strncpy(new_word, word_to_return, strlen(word_to_return) + 1);
-        return new_word;
+        return last_node->val[num_pounds];
     }
     return NULL;
-    // // Check for invalid preconditions
-    // if (dict == NULL || nums == NULL || strlen(nums) == 0) {
-    //     return NULL;
-    // }
-    // if (nums[0] == '#') {
-    //     return NULL;
-    // }
-
-    // char code[MAX_WORD_LENGTH];
-    // int num_pounds = 0;
-    // int index = 0;
-
-    // for (int i = 0; i < strlen(nums); i++) {
-    //     char c = nums[i];
-    //     if (c >= '2' && c <= '9') {
-    //         code[index] = c;
-    //         index++;
-    //     } else if (c == '#') {
-    //         num_pounds++;
-    //     }
-    // }
-    // code[index] = '\0';
-    // GetNode(dict, code, 0);
 }
 
 void DestroyT9(T9* dict) {
@@ -232,8 +207,7 @@ void Put(T9* dict, const char* word, char* nums, int n) {
                 char* new_word = (char*)
                   malloc(sizeof(char) * (strlen(word) + 1));
                 if (new_word == NULL) { return; }
-                // strcpy(new_word, word);
-                strncpy(new_word, word, strnlen(word) + 1);
+                strncpy(new_word, word, strlen(word) + 1);
                 word_list[0] = new_word;
                 dict->list_count = 1;
             } else {
@@ -245,7 +219,6 @@ void Put(T9* dict, const char* word, char* nums, int n) {
                 char* new_word = (char*)
                   malloc(sizeof(char) * (strlen(word) + 1));
                 if (new_word == NULL) { return; }
-                // strcpy(new_word, word);
                 strncpy(new_word, word, strlen(word) + 1);
                 dict->val[size] = new_word;
                 dict->list_count++;
@@ -271,7 +244,7 @@ void Put(T9* dict, const char* word, char* nums, int n) {
     return Put(dict->node[index], word, nums, n+1);
 }
 T9* GetNode(T9* dict, const char* nums, int n) {
-// Once at end of code return dict
+// Base Case: At end of code return dict
     if (n == strlen(nums)) {
         return dict;
     }
