@@ -9,7 +9,6 @@
     Description: [Brief description of the purpose of this program]
 */
 
-// TODO: Includes for functions & types defined elsewhere.
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,184 +16,274 @@
 #include "t9_lib.h"
 #include "t9_priv.h"
 
-// TODO: Defines for symbolic constants (if any).
-#define MAX_WORD_LENGTH 50
-// TODO: Function declarations/prototypes (with appropriate comments).
-// T9* Put(T9* dict, char* nums, int n);
-void Put(T9* node, const char* word, const char* nums, int n);
-char* CharToInt(char* word);
-void InitializeDefaultFields(T9* dict);
 
+#define MAX_WORD_LENGTH 50
+// add comments here
+void CharToT9Code(const char* word, char* code);
+void Put(T9* node, const char* word, char* nums, int n);
+void InitializeDefaultFields(T9* dict);
+T9* GetNode(T9* dict, const char* nums, int n);
 
 T9* InitializeEmptyT9() {
-    // Maybe make sure the size of the T9 struct 
-    // pointer is different than this
+// Maybe make sure the size of the T9 struct
+// pointer is different than this
     T9* dict = (T9*) malloc(sizeof(T9));
-    
-    
+    if (dict == NULL) {
+        // error
+    }
     // Set all the field pointers to NULL
     InitializeDefaultFields(dict);
     return dict;
 }
 
 T9* InitializeFromFileT9(const char* filename) {
-    
     T9* dict = InitializeEmptyT9();
-    /*
-    open file
-    get word from line
-    for each word , call addWordToT9(dict, word) 
-    return file pointer
-    */
     if (filename == NULL) {
-        // std err out 
         return NULL;
     }
     // create buffer to store line
     char buffer[MAX_WORD_LENGTH];
     FILE* fileT9 = fopen(filename, "r");
-
     // Check that fileT9 pointer was properly opened
     if (fileT9 == NULL) {
-        // std err out 
         return NULL;
     }
 
-    // While not at EOF 
+    // While not at EOF
     while (fgets(buffer, MAX_WORD_LENGTH, fileT9) != NULL) {
+        int len = strlen(buffer);
+        if (buffer[len - 1] == '\n') {
+        // Remove/Replace newline with null terminator
+        buffer[len - 1] = '\0';
+        len--;
+        }
         AddWordToT9(dict, buffer);
     }
-    
+    fclose(fileT9);
     return dict;
 }
 
 void AddWordToT9(T9* dict, const char* word) {
-//     Post: in ASCII numbers, nums needs to check 
-//   if (num > 47 && num < 58 || nums == 35)
-    
-    char* nums;    
-
-    // Check if all letters in word are valid,
-    // then call the charToInt
-    int isWord = 1;
-    for (int i = 0; i < strlen(word) - 1; i++) {
-        char letter = word[i]; 
-        if (letter < 'a' || letter > 'z') {
-            isWord = 0;
-            break;
+    if (word != NULL && strlen(word) >= 1) {
+        // Add one for '\0'
+        int len = strlen(word) + 1;
+        char* code = (char*) malloc(sizeof(char) * len);
+        if (code == NULL) {
+                return;
         }
+        // T9* curr = dict;
+        // Check if all letters in word are valid,
+        // then call the CharToT9Code
+        int isWord = 1;
+        for (int i = 0; i < strlen(word); i++) {
+            char letter = word[i];
+            if (letter < 'a' || letter > 'z') {
+                isWord = 0;
+                break;
+            }
+        }
+        if (isWord) {
+            CharToT9Code(word, code);
+            Put(dict, word, code, 0);
+        }
+        free(code);
     }
-    if (isWord) {
-        nums = CharToInt(word);
-    }
-    // Word checked to be valid, so now add to t9
-    // call put to insert the word to
-    // the dict, starting at root (n = 0)
-    Put(dict, word, nums, 0);
 }
 
 char* PredictT9(T9* dict, const char* nums) {
-    // TODO: your code goes here
-    return NULL;  // you will want to change this
+    // Check for invalid preconditions
+    if (dict == NULL || nums == NULL || strlen(nums) == 0
+    || nums[0] == '#') {
+        return NULL;
+    }
+    char code[MAX_WORD_LENGTH];
+    int num_pounds = 0;
+    int index = 0;
+    int pound_found = 0;
+
+    // Loop through nums to separate digits and count pounds
+    for (int i = 0; i < strlen(nums); i++) {
+        char c = nums[i];
+        if (c >= '2' && c <= '9') {
+            if (pound_found) {
+                return NULL;
+            }
+            code[index] = c;
+            index++;
+        } else if (c == '#') {
+            pound_found = 1;
+            num_pounds++;
+        } else {
+            return NULL;
+        }
+    }
+    code[index] = '\0';
+    // Use the GetNode to find the correct node in the trie
+    T9* last_node = GetNode(dict, code, 0);
+
+    // Check the result and return the correct word
+    if (last_node != NULL && last_node->list_count > num_pounds) {
+        const char* word_to_return = last_node->val[num_pounds];
+        char* new_word = (char*) malloc(strlen(word_to_return) + 1);
+        if (new_word == NULL) {
+            return NULL;
+        }
+        // strcpy(new_string, word_to_return);
+        strncpy(new_word, word_to_return, strlen(word_to_return) + 1);
+        return new_word;
+    }
+    return NULL;
+    // // Check for invalid preconditions
+    // if (dict == NULL || nums == NULL || strlen(nums) == 0) {
+    //     return NULL;
+    // }
+    // if (nums[0] == '#') {
+    //     return NULL;
+    // }
+
+    // char code[MAX_WORD_LENGTH];
+    // int num_pounds = 0;
+    // int index = 0;
+
+    // for (int i = 0; i < strlen(nums); i++) {
+    //     char c = nums[i];
+    //     if (c >= '2' && c <= '9') {
+    //         code[index] = c;
+    //         index++;
+    //     } else if (c == '#') {
+    //         num_pounds++;
+    //     }
+    // }
+    // code[index] = '\0';
+    // GetNode(dict, code, 0);
 }
 
 void DestroyT9(T9* dict) {
-    if (dict != NULL) {
-        free(dict);
+    // free word_list and its words
+    // if the array of pointers has been made
+    // then free words
+    if (dict->val != NULL) {
+        for (int i = 0; i < dict->list_count; i++) {
+            free(dict->val[i]);
+        }
+        free(dict->val);
     }
-    // freeing the whole block is required 
-    // so in this case then I want to use recursion to 
-    // go through each of the nodes from the root and check
-    // if its NULL, i.e. has no children. It could then recurse
-    // through each node and check if its null. Then once it hit 
-    // then end, then it will recurse through and free all the T9's
-    // until it made it back to the top. 
-
-    //Also need to dereference the other strings in the string array and set them to NULL
+    // free branches
+    for (int i = 0; i < 8; i++) {
+        if (dict->node[i] != NULL) {
+            DestroyT9(dict->node[i]);
+        }
+    }
+    free(dict);
 }
 
 void InitializeDefaultFields(T9* dict) {
-    dict->node2 = NULL;
-    dict->node3 = NULL;
-    dict->node4 = NULL;
-    dict->node5 = NULL;
-    dict->node6 = NULL;
-    dict->node7 = NULL;
-    dict->node8 = NULL;
-    dict->node9 = NULL;
-    dict->node_pound = NULL;
-    dict->val = '1'; // Root = 1
+// Initialize fields to NULL
+    for (int i = 0; i < 8; i++) {
+        dict->node[i] = NULL;
+    }
+    dict->val = NULL;
+    dict->list_count = 0;
 }
-char* CharToInt(char* word) {
-    int len;
-    len = strlen(word);
-    char code[len];
+void CharToT9Code(const char* word, char* code) {
     char letter;
-    for (int i = 0; i < strlen(word) - 1; i++) {
+    for (int i = 0; i < strlen(word); i++) {
         letter = word[i];
         if (letter >= 'a' && letter <= 'c') {
             code[i] = '2';
-        }
-        else if (letter >= 'd' && letter <= 'f') {
+        } else if (letter >= 'd' && letter <= 'f') {
             code[i] = '3';
-        }
-        else if (letter >= 'g' && letter <= 'i') {
+        } else if (letter >= 'g' && letter <= 'i') {
             code[i] = '4';
-        }
-        else if (letter >= 'j' && letter <= 'l') {
+        } else if (letter >= 'j' && letter <= 'l') {
             code[i] = '5';
-        }
-        else if (letter >= 'm' && letter <= 'o') {
+        } else if (letter >= 'm' && letter <= 'o') {
             code[i] = '6';
-        }
-        else if (letter >= 'p' && letter <= 's') {
+        } else if (letter >= 'p' && letter <= 's') {
             code[i] = '7';
-        }
-        else if (letter >= 't' && letter <= 'v') {
+        } else if (letter >= 't' && letter <= 'v') {
             code[i] = '8';
-        }
-        //else if (letter >= 'w' && letter <= 'z') {
-        else {
+        } else if (letter >= 'w' && letter <= 'z') {
             code[i] = '9';
         }
-        word[i] = code[i];
     }
-    return code;
+    code[strlen(word)] = '\0';
 }
 // recusively search trie for insertion spot
-void Put(T9* node, const char* word, const char* nums, int n) {
-    // allocate T9 for new entry
-    
-    // if a root node, then make a new level and 
-    if (node->val == '1') {
-        // T9* level = InitializeEmptyT9();
-        // Put(node, word, nums, n);
-        char val = nums[n];
-        //node->
-
-    }
-    
-    
-    
-    // Check if at the end of the code and insert
-    if (n == strlen(nums) - 1) {
-        
-        // if there are no words in the pointer array
-        if (node->node_pound == NULL) {
-            char* new_word = (char*) malloc(sizeof(size_t));
-            new_word = word;
-            node->node_pound[0] = new_word;
-        }
-        else {
-            int i = 0;
-            while (node->node_pound[i] != NULL) {
-                i++;
+// n is the index of the code string
+void Put(T9* dict, const char* word, char* nums, int n) {
+    // Base Case: We've reached the end of the
+    // number string, so insert the word.
+    if (n == strlen(nums)) {
+        int isDup = 0;
+        if (dict->val != NULL) {
+            for (int i = 0; i < dict->list_count; i++) {
+                if (strcmp(dict->val[i], word) == 0) {
+                    isDup = 1;
+                    break;
+                }
             }
-            char* new_word = (char*) malloc(sizeof(size_t));
-            new_word = word;
-            node->node_pound[i] = new_word;
         }
+        if (!isDup) {
+            if (dict->val == NULL) {
+                char** word_list = (char**) malloc(sizeof(char*));
+                if (word_list == NULL) { return; }
+                dict->val = word_list;
+                char* new_word = (char*)
+                  malloc(sizeof(char) * (strlen(word) + 1));
+                if (new_word == NULL) { return; }
+                // strcpy(new_word, word);
+                strncpy(new_word, word, strnlen(word) + 1);
+                word_list[0] = new_word;
+                dict->list_count = 1;
+            } else {
+                int size = dict->list_count;
+                char** temp = realloc(dict->val,
+                  sizeof(char*)*(dict->list_count + 1));
+                if (temp == NULL) { return; }
+                dict->val = temp;
+                char* new_word = (char*)
+                  malloc(sizeof(char) * (strlen(word) + 1));
+                if (new_word == NULL) { return; }
+                // strcpy(new_word, word);
+                strncpy(new_word, word, strlen(word) + 1);
+                dict->val[size] = new_word;
+                dict->list_count++;
+            }
+        }
+        return;
+    }
+    // Recursive Step: Continue searching for the insertion point.
+    // Check for invalid digits at the current index before processing.
+    if (nums[n] < '2' || nums[n] > '9') {
+        return;
     }
 
-  
+    int x = nums[n] - '0';
+    int index = x - 2;
+
+    // Check if node for the keypad input is null
+    if (dict->node[index] == NULL) {
+        T9* new_node = InitializeEmptyT9();
+        dict->node[index] = new_node;
+    }
+    // Recurse and return the result
+    return Put(dict->node[index], word, nums, n+1);
+}
+T9* GetNode(T9* dict, const char* nums, int n) {
+// Once at end of code return dict
+    if (n == strlen(nums)) {
+        return dict;
+    }
+    if (nums[n] < '2' || nums[n] > '9') {
+        return NULL;
+    }
+
+    int x = nums[n] - '0';
+    int index = x - 2;
+    if (dict->node[index] == NULL) {
+        return NULL;
+    }
+
+    return GetNode(dict->node[index], nums, n + 1);
 }

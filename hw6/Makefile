@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g -Wall -std=c11
 
-all: t9_tests t9_demo
+all: t9_tests t9_tests_buggy t9_demo
 
 test: t9_tests
 	./t9_tests
