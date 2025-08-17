@@ -6,7 +6,10 @@
 
     Citations: [List external resources or people you consulted]
 
-    Description: [Brief description of the purpose of this program]
+    Description: This program faciliates 3D vector creation and
+    handles operations such as the dot product and cross product
+    as well as standard vector addition, subtraction and
+    multiplication.
 */
 
 #ifndef _VECTOR_H_ // NOLINT
