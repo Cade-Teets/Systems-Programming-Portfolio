@@ -56,14 +56,14 @@ int main() {
   cout << "  "       << v6 << " - " << v5 << " = " << v8 << endl;
 
   // Test cross product
-  Vector v9;  // TODO: call your cross product function for v5 x v6
+  Vector v9 = v5.cross(v6);  // TODO: call your cross product function for v5 x v6
   cout << "Cross product:" << endl;
   cout << "  "       << v5 << " x " << v6 << " = " << v9 << endl;
 
   // Test length
   cout << "Length:" << endl;
-  float len1;  // TODO: replace with length function call for v5
-  float len2;  // TODO: replace with length function call for v6
+  float len1 = v5.length();  // TODO: replace with length function call for v5
+  float len2 = v6.length();  // TODO: replace with length function call for v6
   cout << "  |" << v5 << "| = " << len1 << endl;
   cout << "  |" << v6 << "| = " << len2 << endl;
 
