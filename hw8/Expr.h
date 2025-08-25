@@ -30,7 +30,7 @@ class Expr {
   virtual string toString() const = 0;
   // Pre: all the Vars in this Expr have been substituted using setVariables
   virtual double evaluate() const = 0;
-}; // class Expr
+};  // class Expr
 
 typedef shared_ptr<Expr> ExprPtr;
 
@@ -47,7 +47,7 @@ class Num : public Expr {
 
  private:
   double num_;
-}; // class Num
+};  // class Num
 
 /* Class representing a named variable like "x", "foo", etc.
  * */
@@ -62,7 +62,7 @@ class Var : public Expr {
 
  private:
   string name_;
-}; // class Var
+};  // class Var
 
 class Sum : public Expr {
  public:
@@ -78,11 +78,10 @@ class Sum : public Expr {
  private:
   shared_ptr<Expr> left_;
   shared_ptr<Expr> right_;
-}; // class Sum
+};  // class Sum
 
 shared_ptr<Expr> operator+(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs);
 
-// TODO: Implement the mathematical product
 class Prod : public Expr {
  public:
   Prod(shared_ptr<Expr> left, shared_ptr<Expr> right);
@@ -97,18 +96,26 @@ class Prod : public Expr {
  private:
   shared_ptr<Expr> left_;
   shared_ptr<Expr> right_;
-}; // class Prod
+};  // class Prod
 
-// TODO: Overload operator* to create a Prod
+// Overload operator* to create a Prod
 shared_ptr<Expr> operator*(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs);
 
-// TODO: Implement the mathematical power (e.g. x^2)
-// For the toString(), output in the format of (left^right)
-class Pow : public Expr {};
+class Pow : public Expr {
+ public:
+    Pow(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs);
+    shared_ptr<Expr> clone() const;
+    shared_ptr<Expr> setVariables(
+      const std::map<std::string, double>& values) const;
+    string toString() const {
+      return "(" + left_->toString() + "^" + right_->toString() + ")";
+    }
+    double evaluate() const;
+ private:
+    shared_ptr<Expr> left_;
+    shared_ptr<Expr> right_;
+};
 
-// TODO: Overload operator to create a Pow
-// e.g. (x ^ 2) is x to the power of 2
-// Note, C++ has different operator precedence, so always wrap (L ^ R) in parens
 shared_ptr<Expr> operator^(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs);
 
 }  // namespace expr

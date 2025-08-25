@@ -30,9 +30,11 @@ int main(int argc, char** argv) {
   map<string, double> values = {{"m", 0.5}, {"b", 3}};
   write_file("line.csv", line, values, xs);
 
-  // TODO: Plot a curve using y = mx^2 + b where m = 0.5, b = 3
-  //      It should be written into a file called "curve.csv"
-  //      It should use the same `xs` variable as above
+  // Plot a curve using y = mx^2 + b where m = 0.5, b = 3
+  ExprPtr curve = var("m") * (var("x") ^ num(2.0)) + var("b");
+  cout << "Equation: " << curve << endl;
+
+  write_file("curve.csv", curve, values, xs);
 }
 
 void write_file(string filename, ExprPtr equation,

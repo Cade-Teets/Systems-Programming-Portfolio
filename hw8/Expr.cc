@@ -28,21 +28,25 @@ shared_ptr<Expr> Var::clone() const { return std::make_shared<Var>(name_); }
 
 shared_ptr<Expr> Num::setVariables(
     const std::map<std::string, double>& values) const {
-  // TODO: Implement Num::setVariables
+      return clone();
 }
 
 shared_ptr<Expr> Sum::setVariables(
     const std::map<std::string, double>& values) const {
-  // TODO: Implement Sum::setVariables
+      auto new_left = left_->setVariables(values);
+      auto new_right = right_->setVariables(values);
+
+      return std::make_shared<Sum>(new_left, new_right);
 }
 
 shared_ptr<Expr> Var::setVariables(
     const std::map<std::string, double>& values) const {
   auto result = values.find(name_);
+  // if not located in the map
   if (result == values.end()) {
-    // TODO: Finish implementing Var::setVariables
+    return clone();
   } else {
-    // TODO: Finish implementing Var::setVariables
+    return std::make_shared<Num>(result->second);
   }
 }
 
@@ -54,6 +58,49 @@ double Var::evaluate() const { return NAN; }
 double Num::evaluate() const { return num_; }
 double Sum::evaluate() const { return left_->evaluate() + right_->evaluate(); }
 
-// TODO: Implement more functions here
+// Prod
+Prod::Prod(shared_ptr<Expr> left, shared_ptr<Expr> right)
+  : left_(left), right_(right) {}
+
+shared_ptr<Expr> Prod::clone() const {
+  return std::make_shared<Prod>(left_->clone(), right_->clone());
+}
+
+shared_ptr<Expr> Prod::setVariables(
+  const std::map<std::string, double>& values) const {
+  auto new_left = left_->setVariables(values);
+  auto new_right = right_->setVariables(values);
+
+  return std::make_shared<Prod>(new_left, new_right);
+}
+
+shared_ptr<Expr> operator*(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs) {
+  return std::make_shared<Prod>(lhs, rhs);
+}
+
+double Prod::evaluate() const { return left_->evaluate() * right_->evaluate(); }
+
+// Pow
+Pow::Pow(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs)
+  : left_(lhs), right_(rhs) {}
+
+shared_ptr<Expr> Pow::clone() const {
+  return std::make_shared<Pow>(left_->clone(), right_->clone());
+}
+
+shared_ptr<Expr> Pow::setVariables(
+  const std::map<std::string, double>& values) const {
+    auto new_left = left_->setVariables(values);
+    auto new_right = right_->setVariables(values);
+
+    return std::make_shared<Pow>(new_left, new_right);
+  }
+double Pow::evaluate() const {
+  return pow(left_->evaluate(), right_->evaluate());
+}
+
+shared_ptr<Expr> operator^(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs) {
+  return std::make_shared<Pow>(lhs, rhs);
+}
 
 }  // namespace expr

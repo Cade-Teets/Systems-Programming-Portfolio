@@ -25,17 +25,15 @@ int main() {
   ExprPtr exp2 = exp1->clone();
   cout << exp2 << "  (actual)" << endl;
 
-  // TODO: Uncomment the rest of the code as you progress
+  cout << "((x + 374) * (x + 374))  (expected)" << endl;
+  ExprPtr exp4 = exp1 * exp1;
+  cout << exp4 << "  (actual)" << endl;
 
-  // cout << "((x + 374) * (x + 374))  (expected)" << endl;
-  // ExprPtr exp4 = exp1 * exp1;
-  // cout << exp4 << "  (actual)" << endl;
+  cout << "((x + 374) + ((x + 374)^2))  (expected)" << endl;
+  ExprPtr exp3 = exp2 + (exp2 ^ num(2));
+  cout << exp3 << "  (actual)" << endl;
 
-  // cout << "((x + 374) + ((x + 374)^2))  (expected)" << endl;
-  // ExprPtr exp3 = exp2 + (exp2 ^ num(2));
-  // cout << exp3 << "  (actual)" << endl;
-
-  // cout << "((42 + 374) + ((42 + 374)^2)) = 173472  (expected)" << endl;
-  // cout << exp3->setVariables(values) << " = ";
-  // cout << exp3->setVariables(values)->evaluate() << "  (actual)" << endl;
+  cout << "((42 + 374) + ((42 + 374)^2)) = 173472  (expected)" << endl;
+  cout << exp3->setVariables(values) << " = ";
+  cout << exp3->setVariables(values)->evaluate() << "  (actual)" << endl;
 }
