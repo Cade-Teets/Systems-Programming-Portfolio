@@ -33,10 +33,10 @@ shared_ptr<Expr> Num::setVariables(
 
 shared_ptr<Expr> Sum::setVariables(
     const std::map<std::string, double>& values) const {
-      auto new_left = left_->setVariables(values);
-      auto new_right = right_->setVariables(values);
+      auto updated_left = left_->setVariables(values);
+      auto updated_right = right_->setVariables(values);
 
-      return std::make_shared<Sum>(new_left, new_right);
+      return std::make_shared<Sum>(updated_left, updated_right);
 }
 
 shared_ptr<Expr> Var::setVariables(
@@ -68,10 +68,10 @@ shared_ptr<Expr> Prod::clone() const {
 
 shared_ptr<Expr> Prod::setVariables(
   const std::map<std::string, double>& values) const {
-  auto new_left = left_->setVariables(values);
-  auto new_right = right_->setVariables(values);
+  auto updated_left = left_->setVariables(values);
+  auto updated_right = right_->setVariables(values);
 
-  return std::make_shared<Prod>(new_left, new_right);
+  return std::make_shared<Prod>(updated_left, updated_right);
 }
 
 shared_ptr<Expr> operator*(shared_ptr<Expr> lhs, shared_ptr<Expr> rhs) {
@@ -90,10 +90,10 @@ shared_ptr<Expr> Pow::clone() const {
 
 shared_ptr<Expr> Pow::setVariables(
   const std::map<std::string, double>& values) const {
-    auto new_left = left_->setVariables(values);
-    auto new_right = right_->setVariables(values);
+    auto updated_left = left_->setVariables(values);
+    auto updated_right = right_->setVariables(values);
 
-    return std::make_shared<Pow>(new_left, new_right);
+    return std::make_shared<Pow>(updated_left, updated_right);
   }
 double Pow::evaluate() const {
   return pow(left_->evaluate(), right_->evaluate());
