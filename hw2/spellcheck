@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# Author: Cade M. Teets
+# UWNetID: cteets
+# CSE 374 25su Homework 2
+# Date: [07/09/2025]
+
+# Description: [Script that compares each word in the inFile to its match in the dictionary, tallying
+# up each of the words that are not found in the dict. and returning the numSpellErrors]
+
+# Initialize the numArgs variable and a counter to keep track of the used args
+numArgs=$#
+count=0
+
+# If the number of args passed is 0, tell user how to use the script
+# and pass the output to stderr then exit 1.
+if [ $# -lt 1 ]; then
+    echo "Usage: ./spellcheck filename ..." 1>&2
+    exit 1
+fi
+
+# While the first parameter passed is not a file, then tell user the script 
+# has an error due to nonfile, and skip arg to the next one out due to nonfile not existing
+
+while [ $# -gt 0 ]; do
+    # Check if argument is not a file, if true echo error and skip, else logic goes through the file
+    # and checks for spelling errors (words not in dictionary) and unique words
+    if [ ! -f "$1" ]; then 
+        echo "./spellcheck error: $1 does not exist - skipping" 1>&2
+    else
+        # Create a variable to hold the file name, numSpellErrors and numUnique
+        currFile=$1
+        numSpellErrors=0
+        numUnique=0
+        # If the file.spelling does exist, tell user that you are deleting the old and replacing it
+        if [ -e "$currFile.spelling" ]; then
+            echo "./spellcheck replacing $currFile.spelling file"
+            rm "$currFile.spelling"
+            touch "$currFile.spelling"
+        # If the file.spelling does not exist, tell user one is being created
+        else
+            echo "./spellcheck creating $currFile.spelling file"
+            touch "$currFile.spelling"
+        fi
+
+        # I want to parse each word to grep and then check if its a match
+        # if its not a match, then append it to the <fileName>.spelling
+    
+        while read -r line ; do
+            for word in $line; do
+                
+                if ! grep -iq "^$word$" /usr/share/dict/words; then
+                    echo $word >> "$currFile.spelling"
+                fi
+            
+            done
+        done < "$currFile"
+        
+        # After processing a file, increment counter, and print # of spelling errors to the stdout
+
+        # Have to pass the output of cat currFile.spelling to wc -w to count mispelled words
+        # numUnique is found by sorting the currFile.spelling to get adjacent duplicateds, then unique 
+        # gets rid of the dups and the lines are read to get the value. 
+        numSpellErrors=$(cat "$currFile.spelling" | wc -w)
+        numUnique=$(sort "$currFile.spelling" | uniq | wc -l)
+    
+        echo -n "./spellcheck processed $currFile and found $numSpellErrors"
+        echo " spelling errors, $numUnique of which are unique"
+
+    fi
+    #shift out arg to pass new file in
+    shift    
+done
+exit 0
